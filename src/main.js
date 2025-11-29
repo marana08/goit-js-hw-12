@@ -58,16 +58,16 @@ async function onSearch(event) {
 
         createGallery(data.hits);
 
-        if (data.totalHits <= PER_PAGE) {
+        // Показуємо кнопку Load More тільки якщо є ще сторінки
+        if (data.totalHits > PER_PAGE) {
+            showLoadMoreButton();
+        } else {
             hideLoadMoreButton();
             iziToast.info({
                 title: "End",
-                message: "We're sorry, but you've reached the end of search results.",
+                message: "You've reached the end of search results.",
             });
-            // return;
         }
-
-        showLoadMoreButton();
 
     } catch (error) {
         showError();
@@ -89,12 +89,12 @@ async function onLoadMore() {
 
         smoothScroll();
 
-        // Кінець результатів
+        // Ховаємо кнопку, якщо більше немає зображень
         if (page * PER_PAGE >= data.totalHits) {
             hideLoadMoreButton();
             iziToast.info({
                 title: "End",
-                message:  "We're sorry, but you've reached the end of search results.",
+                message: "You've reached the end of search results.",
             });
         }
 
@@ -109,14 +109,10 @@ async function onLoadMore() {
 //  Допоміжні функції
 // =============================
 function smoothScroll() {
-    const firstCard = document
-        .querySelector(".gallery")
-        ?.firstElementChild;
-
+    const firstCard = document.querySelector(".gallery")?.firstElementChild;
     if (!firstCard) return;
 
     const cardHeight = firstCard.getBoundingClientRect().height;
-
     window.scrollBy({
         top: cardHeight * 2,
         behavior: "smooth",
@@ -129,4 +125,3 @@ function showError() {
         message: "Something went wrong. Try again later.",
     });
 }
-
